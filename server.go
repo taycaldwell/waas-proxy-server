@@ -1,24 +1,24 @@
 package main
 
 import (
-	"fmt"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
 	"github.com/coinbase/waas-client-library-go/auth"
 	"github.com/coinbase/waas-client-library-go/clients"
 	v1clients "github.com/coinbase/waas-client-library-go/clients/v1"
-	v1types "github.com/coinbase/waas-client-library-go/gen/go/coinbase/cloud/types/v1"
 	blockchain "github.com/coinbase/waas-client-library-go/gen/go/coinbase/cloud/blockchain/v1"
-	protocols "github.com/coinbase/waas-client-library-go/gen/go/coinbase/cloud/protocols/v1"
 	mpcKeys "github.com/coinbase/waas-client-library-go/gen/go/coinbase/cloud/mpc_keys/v1"
 	mpcTransactions "github.com/coinbase/waas-client-library-go/gen/go/coinbase/cloud/mpc_transactions/v1"
 	mpcWallet "github.com/coinbase/waas-client-library-go/gen/go/coinbase/cloud/mpc_wallets/v1"
 	pools "github.com/coinbase/waas-client-library-go/gen/go/coinbase/cloud/pools/v1"
+	protocols "github.com/coinbase/waas-client-library-go/gen/go/coinbase/cloud/protocols/v1"
+	v1types "github.com/coinbase/waas-client-library-go/gen/go/coinbase/cloud/types/v1"
+	"github.com/gin-gonic/gin"
 	"google.golang.org/api/iterator"
 )
 
@@ -91,7 +91,7 @@ func main() {
 
 	// Blockchain API - ListNetworks (GET)
 	router.GET("/blockchain/v1/networks", func(c *gin.Context) {
-	
+
 		pageSize, err := parseInt32(c.DefaultQuery("pageSize", "50"))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -508,7 +508,7 @@ func main() {
 		mpcWalletId := c.Param("mpcWalletId")
 
 		mpcWalletName := "pools/" + poolId + "/mpcWallets/" + mpcWalletId
-	
+
 		wallet, err := mpcWalletClient.GetMPCWallet(context.Background(), &mpcWallet.GetMPCWalletRequest{Name: mpcWalletName})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -567,7 +567,7 @@ func main() {
 		networkId := c.Param("networkId")
 		addressId := c.Param("addressId")
 		networkName := "networks/" + networkId + "/addresses/" + addressId
-	
+
 		address, err := mpcWalletClient.GetAddress(context.Background(), &mpcWallet.GetAddressRequest{Name: networkName})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -750,7 +750,7 @@ func main() {
 			return
 		}
 		pageToken := c.Query("pageToken")
-	
+
 		poolsIter := poolClient.ListPools(context.Background(), &pools.ListPoolsRequest{PageSize: pageSize, PageToken: pageToken})
 
 		var pools []*pools.Pool
@@ -807,13 +807,13 @@ func main() {
 	router.POST("/protocols/v1/networks/:networkId/broadcastTransaction", func(c *gin.Context) {
 		networkId := c.Param("networkId")
 		networkName := "networks/" + networkId
-	
+
 		var transaction *v1types.Transaction
 		if err := c.BindJSON(&transaction); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-	
+
 		broadcastTxReq := &protocols.BroadcastTransactionRequest{Network: networkName, Transaction: transaction}
 		response, err := protocolClient.BroadcastTransaction(ctx, broadcastTxReq)
 		if err != nil {
@@ -888,7 +888,7 @@ func main() {
 	})
 
 	server := http.Server{
-		Addr: ":8080",
+		Addr:    ":8080",
 		Handler: router,
 	}
 
